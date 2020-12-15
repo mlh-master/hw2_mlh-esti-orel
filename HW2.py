@@ -42,11 +42,9 @@ def nan2value_random(df):
 
 
     return df
+clean_Diab = nan2value_random(Diab)
 
 #Question 2
-clean_Diab = nan2value_random(Diab)
-# X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.2)
-#X_train, X_test, y_train, y_test = train_test_split(clean_Diab, np.ravel(clean_Diab), test_size=0.2, random_state=0, stratify=np.ravel(clean_Diab))
 
 X = clean_Diab
 y= X[['Diagnosis']]

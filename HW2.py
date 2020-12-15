@@ -43,4 +43,13 @@ def nan2value_random(df):
 
     return df
 
+#Question 2
 clean_Diab = nan2value_random(Diab)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.2)
+#X_train, X_test, y_train, y_test = train_test_split(clean_Diab, np.ravel(clean_Diab), test_size=0.2, random_state=0, stratify=np.ravel(clean_Diab))
+
+X = clean_Diab
+y= X[['Diagnosis']]
+X = X.to_numpy() # can also be X.values
+y = y.to_numpy() # can also be y.values
+X_train, x_test, Y_train, y_test = train_test_split(X, y, test_size = 0.20, random_state = 10, stratify=y)

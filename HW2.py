@@ -40,10 +40,6 @@ def nan2value_random(df):
         bank_for_col = np.random.choice(bank_for_col, size=len(df[col]))
         df[col] = df[col].fillna(pd.Series(bank_for_col))
 
-        a = pd.to_numeric(CTG_features[col], errors='coerce')
-        bank_for_col = a.dropna()
-        bank_for_col = np.random.choice(bank_for_col, size=len(a))
-        c_cdf[col] = a.fillna(pd.Series(bank_for_col))
 
     return df
 

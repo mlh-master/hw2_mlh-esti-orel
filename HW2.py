@@ -51,3 +51,23 @@ y= X[['Diagnosis']]
 X = X.to_numpy() # can also be X.values
 y = y.to_numpy() # can also be y.values
 X_train, x_test, Y_train, y_test = train_test_split(X, y, test_size = 0.20, random_state = 10, stratify=y)
+
+
+#Question 3
+
+# 3a
+
+
+clean_Diab_int = clean_Diab.replace(['Yes','Female','Positive'],value = 1)
+clean_Diab_int = clean_Diab.replace(['No','Male','Negative'],value = 0)
+#3b
+#3c
+pd.plotting.scatter_matrix(clean_Diab_int[['Age','Gender','Increased Urination','Increased Thirst','Sudden Weight Loss']])
+plt.show()
+#Question 4
+
+Y_train = 1 * (Y_train=='M')
+y_test = 1 * (y_test=='M')
+
+#Question 5
+

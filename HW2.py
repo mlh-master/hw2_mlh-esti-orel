@@ -48,18 +48,21 @@ clean_Diab = nan2value_random(Diab)
 
 X = clean_Diab
 y= X[['Diagnosis']]
-X = X.to_numpy() # can also be X.values
-y = y.to_numpy() # can also be y.values
+# X = X.to_numpy() # can also be X.values
+# y = y.to_numpy() # can also be y.values
 X_train, x_test, Y_train, y_test = train_test_split(X, y, test_size = 0.20, random_state = 10, stratify=y)
 
 
 #Question 3
 
 # 3a
+print(X_train[['Gender']]).head()
+# X_train = pd.DataFrame(X_train, columns=['Gender', 'Increased Urination', 'Increased Thirst', 'Sudden Weight Loss', 'Weakness', 'Increased Hunger', 'Genital Thrush', 'Visual Blurring', 'Itching', 'Irritability', 'Delayed Healing', 'Partial Paresis', 'Muscle Stiffness', 'Hair Loss', 'Obesity', 'Diagnosis', 'Family History'])
+X_train_binary = X_train.replace(['Yes','Female','Positive'],value = 1)
+X_train_binary = X_train_binary.replace(['No','Male','Negative'],value = 0)
+x_test_binary = x_test.replace(['Yes','Female','Positive'],value = 1)
+x_test_binary = x_test_binary.replace(['No','Male','Negative'],value = 0)
 
-
-clean_Diab_int = clean_Diab.replace(['Yes','Female','Positive'],value = 1)
-clean_Diab_int = clean_Diab.replace(['No','Male','Negative'],value = 0)
 #3b
 #3c
 pd.plotting.scatter_matrix(clean_Diab_int[['Age','Gender','Increased Urination','Increased Thirst','Sudden Weight Loss']])

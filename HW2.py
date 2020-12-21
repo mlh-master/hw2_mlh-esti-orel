@@ -22,8 +22,6 @@ from sklearn.metrics import log_loss
 from sklearn.pipeline import Pipeline
 
 
-
-
 #Question 1
 
 file = Path.cwd().joinpath('HW2_data.csv')
@@ -56,12 +54,26 @@ X_train, x_test, Y_train, y_test = train_test_split(X, y, test_size = 0.20, rand
 #Question 3
 
 # 3a
-print(X_train[['Gender']]).head()
+#create binary train, test DataFrames (except for age feature)
 # X_train = pd.DataFrame(X_train, columns=['Gender', 'Increased Urination', 'Increased Thirst', 'Sudden Weight Loss', 'Weakness', 'Increased Hunger', 'Genital Thrush', 'Visual Blurring', 'Itching', 'Irritability', 'Delayed Healing', 'Partial Paresis', 'Muscle Stiffness', 'Hair Loss', 'Obesity', 'Diagnosis', 'Family History'])
 X_train_binary = X_train.replace(['Yes','Female','Positive'],value = 1)
 X_train_binary = X_train_binary.replace(['No','Male','Negative'],value = 0)
 x_test_binary = x_test.replace(['Yes','Female','Positive'],value = 1)
 x_test_binary = x_test_binary.replace(['No','Male','Negative'],value = 0)
+#create a dictionary with features and values as %train, %test, %delta
+list_train = [None]*17
+list_test = [None]*17
+delta = [None]*17
+features_dictionary={}
+features_dictionary['Positive Feature']=['%Train', '%Test', '%Delta']
+for i in range(0,17):
+    list_train[i] = X_train_binary.iloc[:,i+1].sum()*(100/len(X_train_binary))
+    list_test[i] = x_test_binary.iloc[:,i+1].sum()*(100/len(x_test_binary))
+    delta[i] = abs(list_train[i]-list_test[i])
+    features_dictionary[clean_Diab.columns[i+1]]= [list_train[i], list_test[i], delta[i]]
+
+df_features_dictionary = pd.DataFrame(features_dictionary).transpose()
+print(df_features_dictionary)
 
 #3b
 #3c

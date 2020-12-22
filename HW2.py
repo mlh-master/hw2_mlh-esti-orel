@@ -56,17 +56,34 @@ X_train, x_test, Y_train, y_test = train_test_split(X, y, test_size = 0.20, rand
 #Question 3
 
 # 3a
-print(X_train[['Gender']]).head()
+#create binary train, test DataFrames (except for age feature)
 # X_train = pd.DataFrame(X_train, columns=['Gender', 'Increased Urination', 'Increased Thirst', 'Sudden Weight Loss', 'Weakness', 'Increased Hunger', 'Genital Thrush', 'Visual Blurring', 'Itching', 'Irritability', 'Delayed Healing', 'Partial Paresis', 'Muscle Stiffness', 'Hair Loss', 'Obesity', 'Diagnosis', 'Family History'])
 X_train_binary = X_train.replace(['Yes','Female','Positive'],value = 1)
 X_train_binary = X_train_binary.replace(['No','Male','Negative'],value = 0)
 x_test_binary = x_test.replace(['Yes','Female','Positive'],value = 1)
 x_test_binary = x_test_binary.replace(['No','Male','Negative'],value = 0)
+#create a dictionary with features and values as %train, %test, %delta
+list_train = [None]*17
+list_test = [None]*17
+delta = [None]*17
+features_dictionary={}
+features_dictionary['Positive Feature']=['%Train', '%Test', '%Delta']
+for i in range(0,17):
+    list_train[i] = X_train_binary.iloc[:,i+1].sum()*(100/len(X_train_binary))
+    list_test[i] = x_test_binary.iloc[:,i+1].sum()*(100/len(x_test_binary))
+    delta[i] = abs(list_train[i]-list_test[i])
+    features_dictionary[clean_Diab.columns[i+1]]= [list_train[i], list_test[i], delta[i]]
+
+df_features_dictionary = pd.DataFrame(features_dictionary).transpose()
+print(df_features_dictionary)
+
 
 #3b
 #3c
-pd.plotting.scatter_matrix(clean_Diab_int[['Age','Gender','Increased Urination','Increased Thirst','Sudden Weight Loss']])
-plt.show()
+#pd.plotting.scatter_matrix(clean_Diab[['Gender','Increased Urination','Increased Thirst','Sudden Weight Loss']])
+#plt.show()
+
+
 #Question 4
 
 Y_train = 1 * (Y_train=='M')
@@ -74,3 +91,48 @@ y_test = 1 * (y_test=='M')
 
 #Question 5
 
+#WHERE IS THE FOLD?
+
+#linear model
+#logistic regrssion
+from sklearn.metrics import plot_confusion_matrix, roc_auc_score
+from sklearn.metrics import log_loss
+from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score
+
+
+logreg = LogisticRegression(solver='saga', penalty='none', max_iter=10000, multi_class='multinomial')
+logreg = logreg.fit(X_train, Y_train)
+y_pred_log = logreg.predict(x_test)
+y_pred_log_train = logreg.predict(X_train)
+w_log = logreg.coef_
+y_pred_log = logreg.predict_proba(X_test)
+
+print("AUC Test is : " + str("{0:.2f}".format(100 * metrics.roc_auc_score(y_test, y_pred_log))) + "%")
+print("AUC Train is : " + str("{0:.2f}".format(100 * metrics.roc_auc_score(Y_train, y_pred_log_train))) + "%")
+print("F1 Test score is: " + str("{0:.2f}".format(100 * metrics.f1_score(y_test, y_pred_log, average='macro'))) + "%")
+print("F1 Train score is: " + str("{0:.2f}".format(100 * metrics.f1_score(Y_train, y_pred_log_train, average='macro'))) + "%")
+print("LOSS Test score is: " + str("{0:.2f}".format(100 * metrics.log_loss(y_test, y_pred_log, average='macro'))) + "%")
+print("LOSS Train score is: " + str("{0:.2f}".format(100 * metrics.log_loss(Y_train, y_pred_log_train, average='macro'))) + "%")
+print(" Test Accuracy is: " + str("{0:.2f}".format(100 * metrics.accuracy_score(y_test, y_pred_log))) + "%")
+print(" Train Accuracy is: " + str("{0:.2f}".format(100 * metrics.accuracy_score(Y_train_test, y_pred_log_train))) + "%")
+
+
+
+#nonlinear
+from sklearn import svm
+from sklearn.model_selection import GridSearchCV
+
+svm_nonlinear = svm.SVC(kernel='rbf')
+svm_nonlinear.fit(X_train, X_train)
+y_test_nonlinear = svm_nonlinear.predict(x_test)
+y_pred_nonlinear_train = svm_nonlinear.predict_proba(X_train)
+
+print("AUC(NL) Test is : " + str("{0:.2f}".format(100 * metrics.roc_auc_score(y_test, y_test_nonlinear))) + "%")
+print("AUC(NL) Train is : " + str("{0:.2f}".format(100 * metrics.roc_auc_score(Y_train, y_pred_nonlinear_train))) + "%")
+print("F1(NL) Test score is: " + str("{0:.2f}".format(100 * metrics.f1_score(y_test, y_test_nonlinear, average='macro'))) + "%")
+print("F1(NL) Train score is: " + str("{0:.2f}".format(100 * metrics.f1_score(Y_train, y_pred_nonlinear_train, average='macro'))) + "%")
+print("LOSS Test(NL) score is: " + str("{0:.2f}".format(100 * metrics.log_loss(y_test, y_test_nonlinear, average='macro'))) + "%")
+print("LOSS Train(NL) score is: " + str("{0:.2f}".format(100 * metrics.log_loss(Y_train,y_pred_nonlinear_train, average='macro'))) + "%")
+print(" Test Accuracy(NL) is: " + str("{0:.2f}".format(100 * metrics.accuracy_score(y_test,y_test_nonlinear))) + "%")
+print(" Train Accuracy(NL) is: " + str("{0:.2f}".format(100 * metrics.accuracy_score(Y_train, y_pred_nonlinear_train))) + "%")

@@ -77,8 +77,43 @@ for i in range(0,17):
 df_features_dictionary = pd.DataFrame(features_dictionary).transpose()
 print(df_features_dictionary)
 
-
 #3b
+#create a dictionary that shows the relationship between feature and label.
+#keys: 1.positive feature 2.negative feature
+#values for each key: 1. number of positive diagnosis 2.number of negative diagnosis
+label_feature_relationship={}
+label_feature_relationship['Female'] = {}
+label_feature_relationship['Female']['Positive'] = len(clean_Diab[(clean_Diab.Gender.str.contains('Female')) & (clean_Diab.Diagnosis.str.contains('Positive'))])
+label_feature_relationship['Female']['Negative'] = len(clean_Diab[(clean_Diab.Gender.str.contains('Female')) & (clean_Diab.Diagnosis.str.contains('Negative'))])
+
+label_feature_relationship['Male'] = {}
+label_feature_relationship['Male']['Positive'] = len(clean_Diab[(clean_Diab.Gender.str.contains('Male')) & (clean_Diab.Diagnosis.str.contains('Positive'))])
+label_feature_relationship['Male']['Negative'] = len(clean_Diab[(clean_Diab.Gender.str.contains('Male')) & (clean_Diab.Diagnosis.str.contains('Negative'))])
+
+for i in range(2,16):
+    title = clean_Diab.columns[i]
+    label_feature_relationship["Has %s" %title] = {}
+    label_feature_relationship["Has %s" %title]['Positive'] = len(clean_Diab[(clean_Diab[title].str.contains('Yes')) & clean_Diab.Diagnosis.str.contains('Positive')])
+    label_feature_relationship["Has %s" %title]['Negative'] = len(clean_Diab[(clean_Diab[title].str.contains('Yes')) & clean_Diab.Diagnosis.str.contains('Negative')])
+    label_feature_relationship["No %s" % title] = {}
+    label_feature_relationship["No %s" % title]['Positive'] = len(clean_Diab[(clean_Diab[title].str.contains('No')) & clean_Diab.Diagnosis.str.contains('Positive')])
+    label_feature_relationship["No %s" % title]['Negative'] = len(clean_Diab[(clean_Diab[title].str.contains('No')) & clean_Diab.Diagnosis.str.contains('Negative')])
+
+label_feature_relationship["Has Family History"] = {}
+label_feature_relationship["Has Family History"]['Positive'] = len(clean_Diab.loc[clean_Diab['Family History']==1 & clean_Diab.Diagnosis.str.contains('Positive')])
+label_feature_relationship["Has Family History"]['Negative'] = len(clean_Diab.loc[clean_Diab['Family History']==1 & clean_Diab.Diagnosis.str.contains('Negative')])
+label_feature_relationship["No Family History"] = {}
+label_feature_relationship["No Family History"]['Positive'] = len(clean_Diab.loc[clean_Diab['Family History']==0 & clean_Diab.Diagnosis.str.contains('Positive')])
+label_feature_relationship["No Family History"]['Negative'] = len(clean_Diab.loc[clean_Diab['Family History']==0 & clean_Diab.Diagnosis.str.contains('Negative')])
+
+#plotting:
+# pd.DataFrame(label_feature_relationship).T.plot(kind='bar')
+for dict, value_dict in label_feature_relationship.items():
+        df = pd.DataFrame.from_dict(value_dict)
+        df_trans = df.T
+        df_trans.plot.bar(rot=0, title=feature)
+        plt.ylabel('Counts')
+
 #3c
 #pd.plotting.scatter_matrix(clean_Diab[['Gender','Increased Urination','Increased Thirst','Sudden Weight Loss']])
 #plt.show()
